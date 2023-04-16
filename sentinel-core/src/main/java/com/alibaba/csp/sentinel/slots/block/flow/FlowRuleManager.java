@@ -15,6 +15,16 @@
  */
 package com.alibaba.csp.sentinel.slots.block.flow;
 
+import com.alibaba.csp.sentinel.concurrent.NamedThreadFactory;
+import com.alibaba.csp.sentinel.config.SentinelConfig;
+import com.alibaba.csp.sentinel.log.RecordLog;
+import com.alibaba.csp.sentinel.node.metric.MetricTimerListener;
+import com.alibaba.csp.sentinel.property.DynamicSentinelProperty;
+import com.alibaba.csp.sentinel.property.PropertyListener;
+import com.alibaba.csp.sentinel.property.SentinelProperty;
+import com.alibaba.csp.sentinel.util.AssertUtil;
+import com.alibaba.csp.sentinel.util.StringUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,16 +33,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.alibaba.csp.sentinel.concurrent.NamedThreadFactory;
-import com.alibaba.csp.sentinel.config.SentinelConfig;
-import com.alibaba.csp.sentinel.log.RecordLog;
-import com.alibaba.csp.sentinel.util.AssertUtil;
-import com.alibaba.csp.sentinel.util.StringUtil;
-import com.alibaba.csp.sentinel.node.metric.MetricTimerListener;
-import com.alibaba.csp.sentinel.property.DynamicSentinelProperty;
-import com.alibaba.csp.sentinel.property.PropertyListener;
-import com.alibaba.csp.sentinel.property.SentinelProperty;
-
 /**
  * <p>
  * One resources can have multiple rules. And these rules take effects in the following order:
@@ -40,10 +40,6 @@ import com.alibaba.csp.sentinel.property.SentinelProperty;
  * <li>requests from specified caller</li>
  * <li>no specified caller</li>
  * </ol>
- * </p>
- *
- * <p>
- * 流控规则的管理
  * </p>
  *
  * @author jialiang.linjl
@@ -57,9 +53,10 @@ public class FlowRuleManager {
     private static final FlowPropertyListener LISTENER = new FlowPropertyListener();
     private static SentinelProperty<List<FlowRule>> currentProperty = new DynamicSentinelProperty<List<FlowRule>>();
 
+    /** the corePool size of SCHEDULER must be set at 1, so the two task ({@link #startMetricTimerListener()} can run orderly by the SCHEDULER **/
     @SuppressWarnings("PMD.ThreadPoolCreationRule")
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1,
-            new NamedThreadFactory("sentinel-metrics-record-task", true));
+        new NamedThreadFactory("sentinel-metrics-record-task", true));
 
     static {
         currentProperty.addListener(LISTENER);
@@ -69,9 +66,9 @@ public class FlowRuleManager {
     /**
      * <p> Start the MetricTimerListener
      * <ol>
-     * <li>If the flushInterval more than 0,
+     *     <li>If the flushInterval more than 0,
      * the timer will run with the flushInterval as the rate </li>.
-     * <li>If the flushInterval less than 0(include) or value is not valid,
+     *      <li>If the flushInterval less than 0(include) or value is not valid,
      * then means the timer will not be started </li>
      * <ol></p>
      */
@@ -79,8 +76,8 @@ public class FlowRuleManager {
         long flushInterval = SentinelConfig.metricLogFlushIntervalSec();
         if (flushInterval <= 0) {
             RecordLog.info("[FlowRuleManager] The MetricTimerListener isn't started. If you want to start it, "
-                            + "please change the value(current: {}) of config({}) more than 0 to start it.", flushInterval,
-                    SentinelConfig.METRIC_FLUSH_INTERVAL);
+                    + "please change the value(current: {}) of config({}) more than 0 to start it.", flushInterval,
+                SentinelConfig.METRIC_FLUSH_INTERVAL);
             return;
         }
         SCHEDULER.scheduleAtFixedRate(new MetricTimerListener(), 0, flushInterval, TimeUnit.SECONDS);

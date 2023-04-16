@@ -23,11 +23,11 @@ package com.alibaba.csp.sentinel;
  */
 public enum EntryType {
     /**
-     * Inbound traffic 入站流量 别人访问你
+     * Inbound traffic
      */
     IN,
     /**
-     * Outbound traffic 出站流量 你访问别人
+     * Outbound traffic
      */
     OUT;
 

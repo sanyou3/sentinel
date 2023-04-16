@@ -16,17 +16,9 @@
 package com.alibaba.csp.sentinel.slots.block.flow;
 
 import com.alibaba.csp.sentinel.node.Node;
-import com.alibaba.csp.sentinel.slots.block.flow.controller.DefaultController;
 
 /**
  * A universal interface for traffic shaping controller.
- * <p>
- * 流控规则中最终决定有没有被限流，当有请求过来时，由该接口来决定当前资源能不能通过，也就是有没有被限流，
- * </p>
- * 流控效果接口
- * 对于qps限流来说有有三种效果：快速失败 、 warm up 、排队等待
- * 对于线程数来说页面是没有选项的，默认就是快速失败
- * {@link DefaultController} 快速失败
  *
  * @author jialiang.linjl
  */
@@ -35,9 +27,9 @@ public interface TrafficShapingController {
     /**
      * Check whether given resource entry can pass with provided count.
      *
-     * @param node         resource node
+     * @param node resource node
      * @param acquireCount count to acquire
-     * @param prioritized  whether the request is prioritized
+     * @param prioritized whether the request is prioritized
      * @return true if the resource entry can pass; false if it should be blocked
      */
     boolean canPass(Node node, int acquireCount, boolean prioritized);
@@ -45,7 +37,7 @@ public interface TrafficShapingController {
     /**
      * Check whether given resource entry can pass with provided count.
      *
-     * @param node         resource node
+     * @param node resource node
      * @param acquireCount count to acquire
      * @return true if the resource entry can pass; false if it should be blocked
      */

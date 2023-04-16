@@ -129,12 +129,6 @@ public final class FlowRuleUtil {
         return newRuleMap;
     }
 
-    /**
-     * 根据设置的阈值类型 和 流控效果的配置生成对应的流控效果
-     *
-     * @param rule
-     * @return
-     */
     private static TrafficShapingController generateRater(/*@Valid*/ FlowRule rule) {
         if (rule.getGrade() == RuleConstant.FLOW_GRADE_QPS) {
             switch (rule.getControlBehavior()) {

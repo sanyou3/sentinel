@@ -21,9 +21,6 @@ import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 
 /**
  * <p>Basic <a href="https://martinfowler.com/bliki/CircuitBreaker.html">circuit breaker</a> interface.</p>
- * <p>
- * 熔断接口
- * </P>
  *
  * @author Eric Zhao
  */
@@ -54,9 +51,6 @@ public interface CircuitBreaker {
     /**
      * <p>Record a completed request with the context and handle state transformation of the circuit breaker.</p>
      * <p>Called when a <strong>passed</strong> invocation finished.</p>
-     * <p>
-     * 当请求完成的时候，会去根据请求是否有异常来决定是打开还是关闭熔断
-     * </p>
      *
      * @param context context of current invocation
      */
@@ -68,7 +62,6 @@ public interface CircuitBreaker {
     enum State {
         /**
          * In {@code OPEN} state, all requests will be rejected until the next recovery time point.
-         * 开启，所有请求都会拒绝
          */
         OPEN,
         /**
@@ -77,14 +70,11 @@ public interface CircuitBreaker {
          * will re-transform to the {@code OPEN} state and wait for the next recovery time point;
          * otherwise the resource will be regarded as "recovered" and the circuit breaker
          * will cease cutting off requests and transform to {@code CLOSED} state.
-         * 这个状态是每隔一段时间，当请求来的时候会尝试让一个请求过去，这时会将状态改成半开，
-         * 当请求完成的时候去判断是不是有异常，如果有的话就就又将状态改成开，如果没有的话那么就将状态改成关闭
          */
         HALF_OPEN,
         /**
          * In {@code CLOSED} state, all requests are permitted. When current metric value exceeds the threshold,
          * the circuit breaker will transform to {@code OPEN} state.
-         * 都可以请求
          */
         CLOSED
     }

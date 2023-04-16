@@ -34,9 +34,6 @@ import com.alibaba.csp.sentinel.slots.nodeselector.NodeSelectorSlot;
  * This class may have a list of sub {@link DefaultNode}s. Child nodes will be created when
  * calling {@link SphU}#entry() or {@link SphO}@entry() multiple times in the same {@link Context}.
  * </p>
- * <p>
- * 资源在一个应用上下文的统计信息 ， 这个对象的作用级别是context
- * </p>
  *
  * @author qinan.qn
  * @see NodeSelectorSlot
@@ -50,13 +47,11 @@ public class DefaultNode extends StatisticNode {
 
     /**
      * The list of all child nodes.
-     * 在同一个context中 ，挂在当前统计节点的子节点集合
      */
     private volatile Set<Node> childList = new HashSet<>();
 
     /**
      * Associated cluster node.
-     * 关联的 ClusterNode ，当前资源在整个应用的统计信息
      */
     private ClusterNode clusterNode;
 
@@ -96,7 +91,7 @@ public class DefaultNode extends StatisticNode {
                     childList = newSet;
                 }
             }
-            RecordLog.info("Add child <{}> to node <{}>", ((DefaultNode) node).id.getName(), id.getName());
+            RecordLog.info("Add child <{}> to node <{}>", ((DefaultNode)node).id.getName(), id.getName());
         }
     }
 
@@ -157,17 +152,17 @@ public class DefaultNode extends StatisticNode {
         }
         if (!(node instanceof EntranceNode)) {
             System.out.println(
-                    String.format("%s(thread:%s pq:%s bq:%s tq:%s rt:%s 1mp:%s 1mb:%s 1mt:%s)", node.id.getShowName(),
-                            node.curThreadNum(), node.passQps(), node.blockQps(), node.totalQps(), node.avgRt(),
-                            node.totalRequest() - node.blockRequest(), node.blockRequest(), node.totalRequest()));
+                String.format("%s(thread:%s pq:%s bq:%s tq:%s rt:%s 1mp:%s 1mb:%s 1mt:%s)", node.id.getShowName(),
+                    node.curThreadNum(), node.passQps(), node.blockQps(), node.totalQps(), node.avgRt(),
+                    node.totalRequest() - node.blockRequest(), node.blockRequest(), node.totalRequest()));
         } else {
             System.out.println(
-                    String.format("Entry-%s(t:%s pq:%s bq:%s tq:%s rt:%s 1mp:%s 1mb:%s 1mt:%s)", node.id.getShowName(),
-                            node.curThreadNum(), node.passQps(), node.blockQps(), node.totalQps(), node.avgRt(),
-                            node.totalRequest() - node.blockRequest(), node.blockRequest(), node.totalRequest()));
+                String.format("Entry-%s(t:%s pq:%s bq:%s tq:%s rt:%s 1mp:%s 1mb:%s 1mt:%s)", node.id.getShowName(),
+                    node.curThreadNum(), node.passQps(), node.blockQps(), node.totalQps(), node.avgRt(),
+                    node.totalRequest() - node.blockRequest(), node.blockRequest(), node.totalRequest()));
         }
         for (Node n : node.getChildList()) {
-            DefaultNode dn = (DefaultNode) n;
+            DefaultNode dn = (DefaultNode)n;
             visitTree(level + 1, dn);
         }
     }

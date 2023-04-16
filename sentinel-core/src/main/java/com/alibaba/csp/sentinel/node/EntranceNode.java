@@ -30,10 +30,6 @@ import com.alibaba.csp.sentinel.slots.nodeselector.NodeSelectorSlot;
  * current context does't have one. Note that same context name will share same {@link EntranceNode}
  * globally.
  * </p>
- * <p>
- * 入口节点,整个机器有这么一个节点，统计所有context的数据 就是所有context的入口节点都会挂在这个节点下
- * 每个context都有一个入口节点，统计该context的数据 就是context调用的第一个资源的DefaultNode都会挂在这个节点下
- * </p>
  *
  * @author qinan.qn
  * @see ContextUtil

@@ -25,7 +25,6 @@ import com.alibaba.csp.sentinel.util.function.Predicate;
 
 /**
  * Holds real-time statistics for resources.
- * 对于资源的统计作用
  *
  * @author qinan.qn
  * @author leyou

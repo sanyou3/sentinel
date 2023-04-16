@@ -23,21 +23,13 @@ import com.alibaba.csp.sentinel.util.TimeUtil;
 import com.alibaba.csp.sentinel.node.Node;
 
 /**
- * 排队等待
- *
  * @author jialiang.linjl
  */
 public class RateLimiterController implements TrafficShapingController {
 
-    /**
-     * 等待的最大时间
-     */
     private final int maxQueueingTimeMs;
     private final double count;
 
-    /**
-     * 上一次请求通过的时间
-     */
     private final AtomicLong latestPassedTime = new AtomicLong(-1);
 
     public RateLimiterController(int timeOut, double count) {
@@ -88,7 +80,6 @@ public class RateLimiterController implements TrafficShapingController {
                     }
                     // in race condition waitTime may <= 0
                     if (waitTime > 0) {
-                        //等待
                         Thread.sleep(waitTime);
                     }
                     return true;

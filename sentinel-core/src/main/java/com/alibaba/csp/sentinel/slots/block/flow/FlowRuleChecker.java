@@ -41,24 +41,6 @@ import com.alibaba.csp.sentinel.util.function.Function;
  */
 public class FlowRuleChecker {
 
-    /**
-     * 根据当前资源的限流规则，判断当前资源是否能通过
-     * <p>
-     * 整个逻辑是
-     * 1.根据资源找到对应的流控规则
-     * 2.根据是否集群来走不同的限流的路
-     * 3.选择统计的节点，会根据这个节点获取相应的统计数据进行判断流量
-     * 1）
-     * 4.根据设置的流控效果进行限流
-     *
-     * @param ruleProvider
-     * @param resource
-     * @param context
-     * @param node
-     * @param count
-     * @param prioritized
-     * @throws BlockException
-     */
     public void checkFlow(Function<String, Collection<FlowRule>> ruleProvider, ResourceWrapper resource,
                           Context context, DefaultNode node, int count, boolean prioritized) throws BlockException {
         if (ruleProvider == null || resource == null) {
@@ -75,64 +57,34 @@ public class FlowRuleChecker {
     }
 
     public boolean canPassCheck(/*@NonNull*/ FlowRule rule, Context context, DefaultNode node,
-                                             int acquireCount) {
+                                                    int acquireCount) {
         return canPassCheck(rule, context, node, acquireCount, false);
     }
 
     public boolean canPassCheck(/*@NonNull*/ FlowRule rule, Context context, DefaultNode node, int acquireCount,
-                                             boolean prioritized) {
+                                                    boolean prioritized) {
         String limitApp = rule.getLimitApp();
         if (limitApp == null) {
-            //限制的应用不存在时，就能通过
             return true;
         }
 
-        //这里就是新增流控规则是不是集群的选项
         if (rule.isClusterMode()) {
-            //是集群
             return passClusterCheck(rule, context, node, acquireCount, prioritized);
         }
 
-        //不是集群
         return passLocalCheck(rule, context, node, acquireCount, prioritized);
     }
 
-    /**
-     * 不是集群模式走的逻辑
-     * <p>
-     * 规律总结：
-     * 1） limitApp 仅仅只是对 流控模式选择直接的时候有用，其他一律没用
-     * 2） 阈值类型为qps，有三种可供选择的流控效果 ，当为并发线程数时，是快速失败，不可选择
-     * </p>
-     *
-     * @param rule
-     * @param context
-     * @param node
-     * @param acquireCount
-     * @param prioritized
-     * @return
-     */
     private static boolean passLocalCheck(FlowRule rule, Context context, DefaultNode node, int acquireCount,
                                           boolean prioritized) {
-        //选择统计节点，所以的限流需要的数据就是根据统计节点来的，所以这个是限流的真正的数据依据
         Node selectedNode = selectNodeByRequesterAndStrategy(rule, context, node);
         if (selectedNode == null) {
-            //没找到就通过
             return true;
         }
 
-        //根据流控效果 进行限流，最后返回是不是能通过
         return rule.getRater().canPass(selectedNode, acquireCount, prioritized);
     }
 
-    /**
-     * 流控模式选择关联、链路的时候 需要选择关联资源
-     *
-     * @param rule
-     * @param context
-     * @param node
-     * @return
-     */
     static Node selectReferenceNode(FlowRule rule, Context context, DefaultNode node) {
         String refResource = rule.getRefResource();
         int strategy = rule.getStrategy();
@@ -142,15 +94,10 @@ public class FlowRuleChecker {
         }
 
         if (strategy == RuleConstant.STRATEGY_RELATE) {
-            //关联资源的意思就是当前规则的限流的数据依据来源于关联的资源，而不是自己的
-            //就是看别人的脸色，限流不是看自己资源的统计数据，而是别人资源的统计数据
             return ClusterBuilderSlot.getClusterNode(refResource);
         }
 
         if (strategy == RuleConstant.STRATEGY_CHAIN) {
-            //链路的意思就是这个资源是在哪个context上调用的
-            // 只有当资源所在的context跟设置的context是一样的时候才会限流。并且统计数据是在该context底下的数据
-
             if (!refResource.equals(context.getName())) {
                 return null;
             }
@@ -165,29 +112,6 @@ public class FlowRuleChecker {
         return !RuleConstant.LIMIT_APP_DEFAULT.equals(origin) && !RuleConstant.LIMIT_APP_OTHER.equals(origin);
     }
 
-    /**
-     * 根据配置的规则选择限流数据的统计维度
-     * 如果设置了针对某个特定的请求来源（default / other 除外），那么只有当且仅当流控模式选择直接才会限流，否则的话就会根据其他的引用策略来选择选择
-     * 设置了默认针对来源（default）
-     * <p>
-     *            default（所有的来源）	                other（除指定规则的其它来源）	                        某个的特定
-     *
-     * 直接	 	    当前资源的ClusterNode	            被限制的来源在当前资源数据统计	               被限制的来源在当前资源数据统计
-     *
-     * 关联	 	   关联资源的ClusterNode	               关联资源的ClusterNode	                            关联资源的ClusterNode
-     *
-     * 链路	 当前资源在关联的链路（context）中的DefaultNode	当前资源在关联的链路（context）中的DefaultNode	当前资源在关联的链路（context）中的DefaultNode
-     *
-     * </p>
-     * <p>
-     * 由上图可知，limitApp 仅仅只是对 流控模式选择直接的时候有用，其他一律没用
-     * </p>
-     *
-     * @param rule
-     * @param context
-     * @param node
-     * @return
-     */
     static Node selectNodeByRequesterAndStrategy(/*@NonNull*/ FlowRule rule, Context context, DefaultNode node) {
         // The limit app should not be empty.
         String limitApp = rule.getLimitApp();
@@ -196,7 +120,6 @@ public class FlowRuleChecker {
 
         if (limitApp.equals(origin) && filterOrigin(origin)) {
             if (strategy == RuleConstant.STRATEGY_DIRECT) {
-                //当限制的资源匹配上了，并且不是默认的资源，并且是直接的流控模式，就返回这个请求的来源在当前资源的统计信息
                 // Matches limit origin, return origin statistic node.
                 return context.getOriginNode();
             }
@@ -210,7 +133,7 @@ public class FlowRuleChecker {
 
             return selectReferenceNode(rule, context, node);
         } else if (RuleConstant.LIMIT_APP_OTHER.equals(limitApp)
-                && FlowRuleManager.isOtherOrigin(origin, rule.getResource())) {
+            && FlowRuleManager.isOtherOrigin(origin, rule.getResource())) {
             if (strategy == RuleConstant.STRATEGY_DIRECT) {
                 return context.getOriginNode();
             }
@@ -221,16 +144,6 @@ public class FlowRuleChecker {
         return null;
     }
 
-    /**
-     * 是集群默认走的逻辑
-     *
-     * @param rule
-     * @param context
-     * @param node
-     * @param acquireCount
-     * @param prioritized
-     * @return
-     */
     private static boolean passClusterCheck(FlowRule rule, Context context, DefaultNode node, int acquireCount,
                                             boolean prioritized) {
         try {

@@ -63,19 +63,16 @@ public class Context {
 
     /**
      * The entrance node of current invocation tree.
-     * 当前context的节点，也就是挂在 ROOT节点 下的节点
      */
     private DefaultNode entranceNode;
 
     /**
      * Current processing entry.
-     * 当前正在进行调用的节点
      */
     private Entry curEntry;
 
     /**
      * The origin of this context (usually indicate different invokers, e.g. service consumer name or origin IP).
-     * 这个请求的来源，就是这个请求是从哪个服务来的，会对请求的来源进行统计
      */
     private String origin = "";
 
@@ -176,7 +173,7 @@ public class Context {
 
     /**
      * Get the parent {@link Node} of the current.
-     * 获取上一个节点，也就是当前资源是的父资源，就是
+     *
      * @return the parent node of the current.
      */
     public Node getLastNode() {

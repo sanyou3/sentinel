@@ -19,22 +19,16 @@ import com.alibaba.csp.sentinel.slots.block.AbstractRule;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 
 /**
- * 新增流控规则页面数据的封装
  * <p>
  * Each flow rule is mainly composed of three factors: <strong>grade</strong>,
  * <strong>strategy</strong> and <strong>controlBehavior</strong>:
  * </p>
  * <ul>
- * <li>The {@link #grade} represents the threshold type of flow control (by QPS or thread count).</li>
- * <li>The {@link #strategy} represents the strategy based on invocation relation.</li>
- * <li>The {@link #controlBehavior} represents the QPS shaping behavior (actions on incoming request when QPS
- * exceeds the threshold).</li>
+ *     <li>The {@link #grade} represents the threshold type of flow control (by QPS or thread count).</li>
+ *     <li>The {@link #strategy} represents the strategy based on invocation relation.</li>
+ *     <li>The {@link #controlBehavior} represents the QPS shaping behavior (actions on incoming request when QPS
+ *     exceeds the threshold).</li>
  * </ul>
- * <p>
- * 针对来源 、 流控模式作用是来选择统计数据的维度的，也就是{@link com.alibaba.csp.sentinel.node.Node} ,依据什么数据进行限流
- * 最后会根据流控效果将阈值类型、单机阈值封装在{@link TrafficShapingController} 中
- * 当请求来的时候，会根据设置的统计维度找到Node，然后根据流控效果产生的controller去判断是否可以通过
- * </p>
  *
  * @author jialiang.linjl
  * @author Eric Zhao
@@ -54,22 +48,17 @@ public class FlowRule extends AbstractRule {
 
     /**
      * The threshold type of flow control (0: thread count, 1: QPS).
-     * 阈值类型
      */
     private int grade = RuleConstant.FLOW_GRADE_QPS;
 
     /**
      * Flow control threshold count.
-     * 单机阈值数
      */
     private double count;
 
     /**
-     * <p>
-     * 流控模式
-     * </p>
      * Flow control strategy based on invocation chain.
-     * <p>
+     *
      * {@link RuleConstant#STRATEGY_DIRECT} for direct flow control (by origin);
      * {@link RuleConstant#STRATEGY_RELATE} for relevant flow control (with relevant resource);
      * {@link RuleConstant#STRATEGY_CHAIN} for chain flow control (by entrance resource).
@@ -78,8 +67,6 @@ public class FlowRule extends AbstractRule {
 
     /**
      * Reference resource in flow control with relevant resource or context.
-     * <p>
-     * 流控模式选择关联、链路的时候 需要选择关联资源
      */
     private String refResource;
 
@@ -199,42 +186,20 @@ public class FlowRule extends AbstractRule {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        if (!super.equals(o)) { return false; }
 
-        FlowRule rule = (FlowRule) o;
+        FlowRule rule = (FlowRule)o;
 
-        if (grade != rule.grade) {
-            return false;
-        }
-        if (Double.compare(rule.count, count) != 0) {
-            return false;
-        }
-        if (strategy != rule.strategy) {
-            return false;
-        }
-        if (controlBehavior != rule.controlBehavior) {
-            return false;
-        }
-        if (warmUpPeriodSec != rule.warmUpPeriodSec) {
-            return false;
-        }
-        if (maxQueueingTimeMs != rule.maxQueueingTimeMs) {
-            return false;
-        }
-        if (clusterMode != rule.clusterMode) {
-            return false;
-        }
-        if (refResource != null ? !refResource.equals(rule.refResource) : rule.refResource != null) {
-            return false;
-        }
+        if (grade != rule.grade) { return false; }
+        if (Double.compare(rule.count, count) != 0) { return false; }
+        if (strategy != rule.strategy) { return false; }
+        if (controlBehavior != rule.controlBehavior) { return false; }
+        if (warmUpPeriodSec != rule.warmUpPeriodSec) { return false; }
+        if (maxQueueingTimeMs != rule.maxQueueingTimeMs) { return false; }
+        if (clusterMode != rule.clusterMode) { return false; }
+        if (refResource != null ? !refResource.equals(rule.refResource) : rule.refResource != null) { return false; }
         return clusterConfig != null ? clusterConfig.equals(rule.clusterConfig) : rule.clusterConfig == null;
     }
 
@@ -244,7 +209,7 @@ public class FlowRule extends AbstractRule {
         long temp;
         result = 31 * result + grade;
         temp = Double.doubleToLongBits(count);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (int)(temp ^ (temp >>> 32));
         result = 31 * result + strategy;
         result = 31 * result + (refResource != null ? refResource.hashCode() : 0);
         result = 31 * result + controlBehavior;
@@ -258,18 +223,18 @@ public class FlowRule extends AbstractRule {
     @Override
     public String toString() {
         return "FlowRule{" +
-                "resource=" + getResource() +
-                ", limitApp=" + getLimitApp() +
-                ", grade=" + grade +
-                ", count=" + count +
-                ", strategy=" + strategy +
-                ", refResource=" + refResource +
-                ", controlBehavior=" + controlBehavior +
-                ", warmUpPeriodSec=" + warmUpPeriodSec +
-                ", maxQueueingTimeMs=" + maxQueueingTimeMs +
-                ", clusterMode=" + clusterMode +
-                ", clusterConfig=" + clusterConfig +
-                ", controller=" + controller +
-                '}';
+            "resource=" + getResource() +
+            ", limitApp=" + getLimitApp() +
+            ", grade=" + grade +
+            ", count=" + count +
+            ", strategy=" + strategy +
+            ", refResource=" + refResource +
+            ", controlBehavior=" + controlBehavior +
+            ", warmUpPeriodSec=" + warmUpPeriodSec +
+            ", maxQueueingTimeMs=" + maxQueueingTimeMs +
+            ", clusterMode=" + clusterMode +
+            ", clusterConfig=" + clusterConfig +
+            ", controller=" + controller +
+            '}';
     }
 }

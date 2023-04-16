@@ -34,14 +34,7 @@ import com.alibaba.csp.sentinel.util.function.BiConsumer;
  */
 class CtEntry extends Entry {
 
-    /**
-     * 所谓的父资源，就是谁调用当前资源，谁就是父资源
-     */
     protected Entry parent = null;
-    /**
-     * 所谓的子资源，就是调用哪个资源哪个子源就是子资源
-     * 为什么子资源只有一个，而父资源也只有一个，因为很显然，在一次请求中，都是单线程执行的，那么一个资源的调用肯定只有一个准确的资源
-     */
     protected Entry child = null;
 
     protected ProcessorSlot<Object> chain;

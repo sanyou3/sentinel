@@ -42,17 +42,6 @@ import com.alibaba.csp.sentinel.context.Context;
  * the current entry in the invocation tree, every {@link Entry#exit()} call should modify
  * {@link Context#setCurEntry(Entry)} as parent entry of this.
  * </p>
- * <p>
- * 一个 entry 就是 就是包装一个资源的基本信息
- * </p>
- *
- * <p>
- * Entry是某一时刻的链路，Default表示的是整个的调用链路
- * 一个Entry只有一个父和子Entry，因为这单线程调用链路中，在某一刻，只能是一个方法调用另一个方法（资源），但是一个方法在整个调用过程中可能会调用很多方法（资源）
- * 一个Entry只有一个DefaultNode ，因为资源在一个context中的只有一份统计数据
- * 一个DefaultNode可以有很多DefaultNode，正如上面说的，一个方法可以调用很多方法，那么一个DefaultNode地下就可能有很多DefaultNode
- * 当新进入的资源还没有父资源的时候，那么调用链路属于context的entranceNode
- * </p>
  *
  * @author qinan.qn
  * @author jialiang.linjl
@@ -66,38 +55,18 @@ public abstract class Entry implements AutoCloseable {
 
     private static final Object[] OBJECTS0 = new Object[0];
 
-    /**
-     * 当前资源的进入时间
-     */
     private final long createTimestamp;
-
-    /**
-     * 当前资源的完成时间
-     */
     private long completeTimestamp;
 
-    /**
-     * 当前资源的统计信息，在同一个context中，同一个资源的统计节点是同一个，即使资源在不同的调用链路中
-     */
     private Node curNode;
     /**
      * {@link Node} of the specific origin, Usually the origin is the Service Consumer.
      */
     private Node originNode;
 
-    /**
-     * 当前资源抛出的异常
-     */
     private Throwable error;
-
-    /**
-     * 当前资源抛出的阻塞异常
-     */
     private BlockException blockError;
 
-    /**
-     * 当前资源的基本信息
-     */
     protected final ResourceWrapper resourceWrapper;
 
     public Entry(ResourceWrapper resourceWrapper) {
@@ -136,7 +105,7 @@ public abstract class Entry implements AutoCloseable {
      * Exit this entry. This method should invoke if and only if once at the end of the resource protection.
      *
      * @param count tokens to release.
-     * @param args  extra parameters
+     * @param args extra parameters
      * @throws ErrorEntryFreeException, if {@link Context#getCurEntry()} is not this entry.
      */
     public abstract void exit(int count, Object... args) throws ErrorEntryFreeException;
@@ -145,7 +114,7 @@ public abstract class Entry implements AutoCloseable {
      * Exit this entry.
      *
      * @param count tokens to release.
-     * @param args  extra parameters
+     * @param args extra parameters
      * @return next available entry after exit, that is the parent entry.
      * @throws ErrorEntryFreeException, if {@link Context#getCurEntry()} is not this entry.
      */
@@ -214,10 +183,10 @@ public abstract class Entry implements AutoCloseable {
      * Like {@code CompletableFuture} since JDK 8, it guarantees specified handler
      * is invoked when this entry terminated (exited), no matter it's blocked or permitted.
      * Use it when you did some STATEFUL operations on entries.
-     *
+     * 
      * @param handler handler function on the invocation terminates
      * @since 1.8.0
      */
     public abstract void whenTerminate(BiConsumer<Context, Entry> handler);
-
+    
 }

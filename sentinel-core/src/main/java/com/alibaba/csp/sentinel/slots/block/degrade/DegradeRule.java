@@ -17,7 +17,6 @@ package com.alibaba.csp.sentinel.slots.block.degrade;
 
 import com.alibaba.csp.sentinel.slots.block.AbstractRule;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
-import com.alibaba.csp.sentinel.slots.block.degrade.circuitbreaker.CircuitBreaker;
 
 import java.util.Objects;
 
@@ -42,17 +41,13 @@ import java.util.Objects;
  * the coming window.
  * </li>
  * </ul>
- * <p>
- *  根据熔断策略，将数据封装在{@link CircuitBreaker} 中，然后通过CircuitBreaker进行熔断控制
- * </p>
  *
  * @author jialiang.linjl
  * @author Eric Zhao
  */
 public class DegradeRule extends AbstractRule {
 
-    public DegradeRule() {
-    }
+    public DegradeRule() {}
 
     public DegradeRule(String resourceName) {
         setResource(resourceName);
@@ -64,19 +59,18 @@ public class DegradeRule extends AbstractRule {
     private int grade = RuleConstant.DEGRADE_GRADE_RT;
 
     /**
-     * Threshold count.
-     * <p>
-     * 阈值 ： 比例阈值、异常数
-     * </p>
+     * Threshold count. The exact meaning depends on the field of grade.
+     * <ul>
+     *     <li>In average RT mode, it means the maximum response time(RT) in milliseconds.</li>
+     *     <li>In exception ratio mode, it means exception ratio which between 0.0 and 1.0.</li>
+     *     <li>In exception count mode, it means exception count</li>
+     * <ul/>
      */
     private double count;
 
     /**
      * Recovery timeout (in seconds) when circuit breaker opens. After the timeout, the circuit breaker will
      * transform to half-open state for trying a few requests.
-     * <p>
-     * 熔断时间，将到达这个时间之后，会尝试将熔断状态从开改成半开
-     * </p>
      */
     private int timeWindow;
 
@@ -89,9 +83,16 @@ public class DegradeRule extends AbstractRule {
 
     /**
      * The threshold of slow request ratio in RT mode.
+     *
+     * @since 1.8.0
      */
     private double slowRatioThreshold = 1.0d;
 
+    /**
+     * The interval statistics duration in millisecond.
+     *
+     * @since 1.8.0
+     */
     private int statIntervalMs = 1000;
 
     public int getGrade() {
@@ -150,41 +151,35 @@ public class DegradeRule extends AbstractRule {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        DegradeRule rule = (DegradeRule) o;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        if (!super.equals(o)) { return false; }
+        DegradeRule rule = (DegradeRule)o;
         return Double.compare(rule.count, count) == 0 &&
-                timeWindow == rule.timeWindow &&
-                grade == rule.grade &&
-                minRequestAmount == rule.minRequestAmount &&
-                Double.compare(rule.slowRatioThreshold, slowRatioThreshold) == 0 &&
-                statIntervalMs == rule.statIntervalMs;
+            timeWindow == rule.timeWindow &&
+            grade == rule.grade &&
+            minRequestAmount == rule.minRequestAmount &&
+            Double.compare(rule.slowRatioThreshold, slowRatioThreshold) == 0 &&
+            statIntervalMs == rule.statIntervalMs;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), count, timeWindow, grade, minRequestAmount,
-                slowRatioThreshold, statIntervalMs);
+            slowRatioThreshold, statIntervalMs);
     }
 
     @Override
     public String toString() {
         return "DegradeRule{" +
-                "resource=" + getResource() +
-                ", grade=" + grade +
-                ", count=" + count +
-                ", limitApp=" + getLimitApp() +
-                ", timeWindow=" + timeWindow +
-                ", minRequestAmount=" + minRequestAmount +
-                ", slowRatioThreshold=" + slowRatioThreshold +
-                ", statIntervalMs=" + statIntervalMs +
-                '}';
+            "resource=" + getResource() +
+            ", grade=" + grade +
+            ", count=" + count +
+            ", limitApp=" + getLimitApp() +
+            ", timeWindow=" + timeWindow +
+            ", minRequestAmount=" + minRequestAmount +
+            ", slowRatioThreshold=" + slowRatioThreshold +
+            ", statIntervalMs=" + statIntervalMs +
+            '}';
     }
 }

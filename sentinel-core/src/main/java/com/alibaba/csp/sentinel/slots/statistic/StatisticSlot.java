@@ -44,9 +44,6 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
  * <li>Finally, the sum statistics of all entrances.</li>
  * </ul>
  * </p>
- * <p>
- * 从不同统计维度增加请求、请求通过等数量
- * </p>
  *
  * @author jialiang.linjl
  * @author Eric Zhao
@@ -67,14 +64,12 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
 
             if (context.getCurEntry().getOriginNode() != null) {
                 // Add count for origin node.
-                //统计请求的来源在当前资源的数量
                 context.getCurEntry().getOriginNode().increaseThreadNum();
                 context.getCurEntry().getOriginNode().addPassRequest(count);
             }
 
             if (resourceWrapper.getEntryType() == EntryType.IN) {
                 // Add count for global inbound entry node for global statistics.
-                //当前资源的EntryType.IN 是
                 Constants.ENTRY_NODE.increaseThreadNum();
                 Constants.ENTRY_NODE.addPassRequest(count);
             }
@@ -84,7 +79,6 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
                 handler.onPass(context, resourceWrapper, node, count, args);
             }
         } catch (PriorityWaitException ex) {
-            //当抛出异常，增加请求的数量，但不增加通过的请求量
             node.increaseThreadNum();
             if (context.getCurEntry().getOriginNode() != null) {
                 // Add count for origin node.
@@ -154,7 +148,8 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
             handler.onExit(context, resourceWrapper, count, args);
         }
 
-        fireExit(context, resourceWrapper, count);
+        // fix bug https://github.com/alibaba/Sentinel/issues/2374
+        fireExit(context, resourceWrapper, count, args);
     }
 
     private void recordCompleteFor(Node node, int batchCount, long rt, Throwable error) {

@@ -113,19 +113,11 @@ public class ContextUtil {
     public static Context enter(String name, String origin) {
         if (Constants.CONTEXT_DEFAULT_NAME.equals(name)) {
             throw new ContextNameDefineException(
-                    "The " + Constants.CONTEXT_DEFAULT_NAME + " can't be permit to defined!");
+                "The " + Constants.CONTEXT_DEFAULT_NAME + " can't be permit to defined!");
         }
         return trueEnter(name, origin);
     }
 
-    /**
-     * 判断当前线程是否有context，如果有就返回，如果没有就创建一个context的
-     * 判断这个上下文id是否存在入口节点，有的话就设置到context中，没有的话就创建一个入口节点，并挂在机器的节点上
-     *
-     * @param name
-     * @param origin
-     * @return
-     */
     protected static Context trueEnter(String name, String origin) {
         Context context = contextHolder.get();
         if (context == null) {
@@ -175,7 +167,7 @@ public class ContextUtil {
         // Don't need to be thread-safe.
         if (shouldWarn) {
             RecordLog.warn("[SentinelStatusChecker] WARN: Amount of context exceeds the threshold "
-                    + Constants.MAX_CONTEXT_NAME_SIZE + ". Entries in new contexts will NOT take effect!");
+                + Constants.MAX_CONTEXT_NAME_SIZE + ". Entries in new contexts will NOT take effect!");
             shouldWarn = false;
         }
     }

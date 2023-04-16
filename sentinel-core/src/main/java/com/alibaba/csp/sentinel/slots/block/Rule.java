@@ -15,18 +15,8 @@
  */
 package com.alibaba.csp.sentinel.slots.block;
 
-import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
-import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
-import com.alibaba.csp.sentinel.slots.system.SystemRule;
-
 /**
  * Base interface of all rules.
- * 这个类就是对页面数据响应规则数据的封装
- * <p>
- * 当页面设置的数据到达后，根据规则的类型对数据进行处理
- * {@link FlowRule} 流控规则
- * {@link DegradeRule} 熔断规则
- * {@link SystemRule} 系统规则
  *
  * @author youji.zj
  */
