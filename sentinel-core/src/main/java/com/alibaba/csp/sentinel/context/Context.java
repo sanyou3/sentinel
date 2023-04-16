@@ -75,6 +75,7 @@ public class Context {
 
     /**
      * The origin of this context (usually indicate different invokers, e.g. service consumer name or origin IP).
+     * 这个请求的来源，就是这个请求是从哪个服务来的，会对请求的来源进行统计
      */
     private String origin = "";
 
