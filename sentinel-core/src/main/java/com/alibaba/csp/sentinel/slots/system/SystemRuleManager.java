@@ -305,24 +305,26 @@ public final class SystemRuleManager {
             return;
         }
 
-        // total qps
+        // total qps 判断qps
         double currentQps = Constants.ENTRY_NODE.passQps();
         if (currentQps + count > qps) {
             throw new SystemBlockException(resourceWrapper.getName(), "qps");
         }
 
-        // total thread
+        // total thread 判断线程数
         int currentThread = Constants.ENTRY_NODE.curThreadNum();
         if (currentThread > maxThread) {
             throw new SystemBlockException(resourceWrapper.getName(), "thread");
         }
 
+        // 判断平均响应时间
         double rt = Constants.ENTRY_NODE.avgRt();
         if (rt > maxRt) {
             throw new SystemBlockException(resourceWrapper.getName(), "rt");
         }
 
         // load. BBR algorithm.
+        // 系统的负载
         if (highestSystemLoadIsSet && getCurrentSystemAvgLoad() > highestSystemLoad) {
             if (!checkBbr(currentThread)) {
                 throw new SystemBlockException(resourceWrapper.getName(), "load");

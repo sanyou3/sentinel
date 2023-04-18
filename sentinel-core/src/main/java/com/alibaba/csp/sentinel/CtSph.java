@@ -47,6 +47,7 @@ public class CtSph implements Sph {
     /**
      * Same resource({@link ResourceWrapper#equals(Object)}) will share the same
      * {@link ProcessorSlotChain}, no matter in which {@link Context}.
+     * 每个资源都有一个对应的 处理器链条
      */
     private static volatile Map<ResourceWrapper, ProcessorSlotChain> chainMap
         = new HashMap<ResourceWrapper, ProcessorSlotChain>();

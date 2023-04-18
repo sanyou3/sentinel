@@ -83,7 +83,7 @@ import com.alibaba.csp.sentinel.util.function.Predicate;
  *                                                      |
  *                                                    request
  * </pre>
- *
+ * 默认的一个基础实现
  * @author qinan.qn
  * @author jialiang.linjl
  */

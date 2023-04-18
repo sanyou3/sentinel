@@ -30,7 +30,7 @@ import com.alibaba.csp.sentinel.spi.Spi;
 
 /**
  * A {@link ProcessorSlot} dedicates to circuit breaking.
- *
+ * 熔断
  * @author Carpenter Lee
  * @author Eric Zhao
  */

@@ -63,6 +63,7 @@ public class Context {
 
     /**
      * The entrance node of current invocation tree.
+     * 当前调用树的入口节点
      */
     private DefaultNode entranceNode;
 

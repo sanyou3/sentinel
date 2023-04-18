@@ -26,6 +26,7 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 import com.sun.management.OperatingSystemMXBean;
 
 /**
+ * 统计当前机器的负载情况
  * @author jialiang.linjl
  */
 public class SystemStatusListener implements Runnable {

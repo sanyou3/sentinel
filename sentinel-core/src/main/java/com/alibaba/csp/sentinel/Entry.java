@@ -55,7 +55,14 @@ public abstract class Entry implements AutoCloseable {
 
     private static final Object[] OBJECTS0 = new Object[0];
 
+    /**
+     * 当前资源请求的时间
+     */
     private final long createTimestamp;
+
+    /**
+     * 当前资源完成时间
+     */
     private long completeTimestamp;
 
     private Node curNode;

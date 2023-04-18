@@ -40,7 +40,7 @@ import com.alibaba.csp.sentinel.util.AssertUtil;
  * </p>
  *
  * <p>
- * 每个资源在机器中的统计信息 ，作用对象是整个应用
+ * 每个资源在机器中的统计信息 ，作用对象是整个应用，一个资源在整个服务中只有一个ClusterNode对象
  * </p>
  *
  * @author qinan.qn
@@ -69,7 +69,7 @@ public class ClusterNode extends StatisticNode {
      * at the very beginning while concurrent map will hold the lock all the time.
      * </p>
      * <p>
-     * 我们知道 ClusterNode 是一个资源在一个应用中的统计数据 ，那么 针对不同来源请求该资源的统计也是在应用级别的
+     * 我们知道 ClusterNode 是一个资源在一个应用中的统计数据 ，不同请求来源各自调用当前资源的统计数据
      * </p>
      */
     private Map<String, StatisticNode> originCountMap = new HashMap<>();

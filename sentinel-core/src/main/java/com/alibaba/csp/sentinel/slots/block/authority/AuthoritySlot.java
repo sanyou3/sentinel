@@ -28,7 +28,8 @@ import com.alibaba.csp.sentinel.spi.Spi;
 
 /**
  * A {@link ProcessorSlot} that dedicates to {@link AuthorityRule} checking.
- *
+ * 这个的作用就是检查调用来源是否在当前资源调用的黑白名单内，也就说，一个资源可能被很多的服务调用，比如说AB两个服务都能调同一个接口，
+ * 当时突然之间不想A服务调用当前资源（接口）（只是当前资源）那么就可以通过这个规则来禁止调用
  * @author leyou
  * @author Eric Zhao
  */

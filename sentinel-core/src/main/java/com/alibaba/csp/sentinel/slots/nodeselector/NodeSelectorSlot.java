@@ -122,7 +122,7 @@ import java.util.Map;
  * {@code curl http://localhost:8719/tree?type=root}
  * </p>
  * <p>
- * 设置当前资源在当前上下文的统计数据 ，将当前正准备进入资源的统计数据挂在上个资源的统计的节点上
+ * 设置当前资源在当前上下文的统计数据 ，同一个资源在不用的Context中有不同的DefaultNode，之后向后面传递的都是这个DefaultNode
  * </p>
  *
  * @author jialiang.linjl
@@ -134,6 +134,7 @@ public class NodeSelectorSlot extends AbstractLinkedProcessorSlot<Object> {
 
     /**
      * {@link DefaultNode}s of the same resource in different context.
+     * 一个资源在不同Context数据的统计信息，因为NodeSelectorSlot不是单例的，一个资源对应一个NodeSelectorSlot
      */
     private volatile Map<String, DefaultNode> map = new HashMap<String, DefaultNode>(10);
 

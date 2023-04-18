@@ -25,7 +25,7 @@ import com.alibaba.csp.sentinel.spi.Spi;
 
 /**
  * A {@link ProcessorSlot} that dedicates to {@link SystemRule} checking.
- *
+ * 检查整个服务的系统规则
  * @author jialiang.linjl
  * @author leyou
  */

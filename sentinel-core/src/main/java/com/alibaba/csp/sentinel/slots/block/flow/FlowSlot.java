@@ -134,7 +134,9 @@ import java.util.Map;
  * fixed rate until all the requests have been processed or time out.
  * </p>
  * </ol>
- *
+ * <p>
+ *     流量控制
+ * </p>
  * @author jialiang.linjl
  * @author Eric Zhao
  */

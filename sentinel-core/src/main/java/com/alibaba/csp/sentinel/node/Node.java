@@ -26,6 +26,8 @@ import com.alibaba.csp.sentinel.util.function.Predicate;
 /**
  * Holds real-time statistics for resources.
  *
+ * 这是一个统计接口，比如统计请求次数，当前资源正在请求的线程数
+ *
  * @author qinan.qn
  * @author leyou
  * @author Eric Zhao
@@ -34,14 +36,14 @@ public interface Node extends OccupySupport, DebugSupport {
 
     /**
      * Get incoming request per minute ({@code pass + block}).
-     *
+     * 每分钟请求的次数
      * @return total request count per minute
      */
     long totalRequest();
 
     /**
      * Get pass count per minute.
-     *
+     * 每分钟请求通过的次数
      * @return total passed request count per minute
      * @since 1.5.0
      */
@@ -49,14 +51,14 @@ public interface Node extends OccupySupport, DebugSupport {
 
     /**
      * Get {@link Entry#exit()} count per minute.
-     *
+     * 每分钟请求成功的次数
      * @return total completed request count per minute
      */
     long totalSuccess();
 
     /**
      * Get blocked request count per minute (totalBlockRequest).
-     *
+     * 阻塞的请求次数
      * @return total blocked request count per minute
      */
     long blockRequest();

@@ -43,6 +43,11 @@ import com.alibaba.csp.sentinel.spi.Spi;
  * One resource has only one cluster node, while one resource can have multiple
  * default nodes.
  * </p>
+ * <>
+ *     主要有干了两件事
+ *     1) 创建或者获取ClusterNode，只创建一次，后面都是获取，同一个资源在同一台机器上只有一个ClusterNode
+ *     2) 创建或者获取调用源的统计数据StatisticNode，也就是上游服务的关于当当前资源的调用信息
+ * </>
  *
  * @author jialiang.linjl
  */
@@ -78,6 +83,9 @@ public class ClusterBuilderSlot extends AbstractLinkedProcessorSlot<DefaultNode>
 
     private static final Object lock = new Object();
 
+    /**
+     * 当前这个资源在所有的context中的统计信息的总和
+     */
     private volatile ClusterNode clusterNode = null;
 
     @Override
@@ -97,6 +105,7 @@ public class ClusterBuilderSlot extends AbstractLinkedProcessorSlot<DefaultNode>
                 }
             }
         }
+
         node.setClusterNode(clusterNode);
 
         /*
@@ -104,6 +113,7 @@ public class ClusterBuilderSlot extends AbstractLinkedProcessorSlot<DefaultNode>
          * the specific origin.
          */
         if (!"".equals(context.getOrigin())) {
+            //构建调用源节点
             Node originNode = node.getClusterNode().getOrCreateOriginNode(context.getOrigin());
             context.getCurEntry().setOriginNode(originNode);
         }

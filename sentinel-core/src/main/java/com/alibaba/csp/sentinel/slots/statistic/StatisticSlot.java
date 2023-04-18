@@ -44,7 +44,7 @@ import com.alibaba.csp.sentinel.slots.block.BlockException;
  * <li>Finally, the sum statistics of all entrances.</li>
  * </ul>
  * </p>
- *
+ * 这是一个核心的组件，之前都是准备，也就是对统计数据进行一些准备工作，而这个节点的作用就是用来统计，填充前面设置的Node的数据的
  * @author jialiang.linjl
  * @author Eric Zhao
  */
@@ -56,20 +56,27 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
                       boolean prioritized, Object... args) throws Throwable {
         try {
             // Do some checking.
+            // 先走其它节点，其它节点就是限流，降级之类的
             fireEntry(context, resourceWrapper, node, count, prioritized, args);
 
             // Request passed, add thread count and pass count.
+            // 没发生异常，就说明当前请求正常通过
+            //增加资源请求的线程数
             node.increaseThreadNum();
+            //请求通过的数
             node.addPassRequest(count);
 
             if (context.getCurEntry().getOriginNode() != null) {
                 // Add count for origin node.
+                // 增加这个请求源对当前这个资源的
                 context.getCurEntry().getOriginNode().increaseThreadNum();
                 context.getCurEntry().getOriginNode().addPassRequest(count);
             }
 
             if (resourceWrapper.getEntryType() == EntryType.IN) {
                 // Add count for global inbound entry node for global statistics.
+                // 当前资源是入口资源，所谓的入口资源就是别人调用我系统的资源
+                // 出口资源就是我调用别人的，比如说http调用，那么其实对于这种调用也需要进行保护
                 Constants.ENTRY_NODE.increaseThreadNum();
                 Constants.ENTRY_NODE.addPassRequest(count);
             }
@@ -130,6 +137,8 @@ public class StatisticSlot extends AbstractLinkedProcessorSlot<DefaultNode> {
             // Calculate response time (use completeStatTime as the time of completion).
             long completeStatTime = TimeUtil.currentTimeMillis();
             context.getCurEntry().setCompleteTimestamp(completeStatTime);
+
+            //计算资源访问时间，就是rt
             long rt = completeStatTime - context.getCurEntry().getCreateTimestamp();
 
             Throwable error = context.getCurEntry().getError();
