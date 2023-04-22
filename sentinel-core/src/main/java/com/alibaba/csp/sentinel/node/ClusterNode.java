@@ -100,7 +100,7 @@ public class ClusterNode extends StatisticNode {
      * <p>Get {@link Node} of the specific origin. Usually the origin is the Service Consumer's app name.</p>
      * <p>If the origin node for given origin is absent, then a new {@link StatisticNode}
      * for the origin will be created and returned.</p>
-     *
+     * 从这看一看出，一个origin在一个资源中只有一个统计对象
      * @param origin The caller's name, which is designated in the {@code parameter} parameter
      *               {@link ContextUtil#enter(String name, String origin)}.
      * @return the {@link Node} of the specific origin

@@ -135,7 +135,7 @@ import java.util.Map;
  * </p>
  * </ol>
  * <p>
- *     流量控制
+ *     限流，根据统计的数据和当前资源的限流规则来进行限流
  * </p>
  * @author jialiang.linjl
  * @author Eric Zhao

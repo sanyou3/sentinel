@@ -47,11 +47,13 @@ public class DefaultNode extends StatisticNode {
 
     /**
      * The list of all child nodes.
+     * 当前节点的子节点，
      */
     private volatile Set<Node> childList = new HashSet<>();
 
     /**
      * Associated cluster node.
+     * 当前链路的统计数据在整个应用中的统计数据
      */
     private ClusterNode clusterNode;
 

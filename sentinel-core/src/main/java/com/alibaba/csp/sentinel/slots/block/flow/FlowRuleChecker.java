@@ -61,8 +61,21 @@ public class FlowRuleChecker {
         return canPassCheck(rule, context, node, acquireCount, false);
     }
 
+    /**
+     * 根据限流规则判断当前调用脸是否需要限流
+     *
+     * @param rule
+     * @param context
+     * @param node
+     * @param acquireCount
+     * @param prioritized
+     * @return
+     */
     public boolean canPassCheck(/*@NonNull*/ FlowRule rule, Context context, DefaultNode node, int acquireCount,
                                                     boolean prioritized) {
+
+        //获取规则适用的服务名，也就是这个规则适用于哪个调用服务，在页面配置的时候不配置默认是default
+        //比如统一个资源（接口） 被 A B两个服务调用，但是A现在请求很频繁，现在需要限制A的请求次数，但是不想现在B，那么就可以写A
         String limitApp = rule.getLimitApp();
         if (limitApp == null) {
             return true;
@@ -85,7 +98,16 @@ public class FlowRuleChecker {
         return rule.getRater().canPass(selectedNode, acquireCount, prioritized);
     }
 
+    /**
+     * 不是直接限流，而是使用了关联或者是链路
+     *
+     * @param rule
+     * @param context
+     * @param node
+     * @return
+     */
     static Node selectReferenceNode(FlowRule rule, Context context, DefaultNode node) {
+        // 获取名称
         String refResource = rule.getRefResource();
         int strategy = rule.getStrategy();
 
@@ -94,6 +116,7 @@ public class FlowRuleChecker {
         }
 
         if (strategy == RuleConstant.STRATEGY_RELATE) {
+            //
             return ClusterBuilderSlot.getClusterNode(refResource);
         }
 
@@ -112,28 +135,42 @@ public class FlowRuleChecker {
         return !RuleConstant.LIMIT_APP_DEFAULT.equals(origin) && !RuleConstant.LIMIT_APP_OTHER.equals(origin);
     }
 
+    /**
+     * 根据规则来选择一个适用于当前规则的统计数据
+     *
+     * @param rule
+     * @param context
+     * @param node
+     * @return
+     */
     static Node selectNodeByRequesterAndStrategy(/*@NonNull*/ FlowRule rule, Context context, DefaultNode node) {
         // The limit app should not be empty.
+        //限制的服务名
         String limitApp = rule.getLimitApp();
+        // 页面配置的那个类型，就是直接、关联、链路
         int strategy = rule.getStrategy();
         String origin = context.getOrigin();
 
         if (limitApp.equals(origin) && filterOrigin(origin)) {
             if (strategy == RuleConstant.STRATEGY_DIRECT) {
                 // Matches limit origin, return origin statistic node.
+                // 直接限流，设置了某个服务的调用，那么就是用这个服务对当前资源的统计数据
                 return context.getOriginNode();
             }
 
             return selectReferenceNode(rule, context, node);
         } else if (RuleConstant.LIMIT_APP_DEFAULT.equals(limitApp)) {
+            //没有设置限制的服务名，就是default
             if (strategy == RuleConstant.STRATEGY_DIRECT) {
                 // Return the cluster node.
+                // 直接限流 那么就用当前资源被所有入口调用的数据的访问
                 return node.getClusterNode();
             }
 
             return selectReferenceNode(rule, context, node);
         } else if (RuleConstant.LIMIT_APP_OTHER.equals(limitApp)
             && FlowRuleManager.isOtherOrigin(origin, rule.getResource())) {
+            //
             if (strategy == RuleConstant.STRATEGY_DIRECT) {
                 return context.getOriginNode();
             }

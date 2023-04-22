@@ -62,6 +62,7 @@ public final class Constants {
 
     /**
      * Global statistic node for inbound traffic. Usually used for {@code SystemRule} checking.
+     * 入站资源统计节点，这个是统计整个系统被其它所有服务调用的统计，代表了整个系统数据统计，用来服务于系统规则
      */
     public final static ClusterNode ENTRY_NODE = new ClusterNode(TOTAL_IN_RESOURCE_NAME, ResourceTypeConstants.COMMON);
 

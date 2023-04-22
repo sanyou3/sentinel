@@ -30,7 +30,7 @@ import com.alibaba.csp.sentinel.slots.nodeselector.NodeSelectorSlot;
  * current context does't have one. Note that same context name will share same {@link EntranceNode}
  * globally.
  * </p>
- *
+ * 入口节点，也就是说 ，每个链路只有一个，什么叫入口，比如通过rpc调用的入口，比如dubbo，又或者是通过http调用，那就是，不同的调用方式有不同的统计信息
  * @author qinan.qn
  * @see ContextUtil
  * @see ContextUtil#enter(String, String)

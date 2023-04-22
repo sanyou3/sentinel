@@ -106,6 +106,7 @@ public class ClusterBuilderSlot extends AbstractLinkedProcessorSlot<DefaultNode>
             }
         }
 
+        //设置当前资源在整个应用中被访问的数据统计
         node.setClusterNode(clusterNode);
 
         /*
@@ -113,7 +114,7 @@ public class ClusterBuilderSlot extends AbstractLinkedProcessorSlot<DefaultNode>
          * the specific origin.
          */
         if (!"".equals(context.getOrigin())) {
-            //构建调用源节点
+            //构建调用源节点，某个调用源，就是某个应用，服务对当前资源访问的统计信息
             Node originNode = node.getClusterNode().getOrCreateOriginNode(context.getOrigin());
             context.getCurEntry().setOriginNode(originNode);
         }

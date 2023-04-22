@@ -122,7 +122,7 @@ import java.util.Map;
  * {@code curl http://localhost:8719/tree?type=root}
  * </p>
  * <p>
- * 设置当前资源在当前上下文的统计数据 ，同一个资源在不用的Context中有不同的DefaultNode，之后向后面传递的都是这个DefaultNode
+ * 设置当前资源在当前链路的统计数据 ，同一个资源在不用的Context中有不同的DefaultNode，之后向后面传递的都是这个DefaultNode
  * </p>
  *
  * @author jialiang.linjl
@@ -164,6 +164,7 @@ public class NodeSelectorSlot extends AbstractLinkedProcessorSlot<Object> {
             synchronized (this) {
                 node = map.get(context.getName());
                 if (node == null) {
+                    //创建资源在链路中的
                     node = new DefaultNode(resourceWrapper, null);
                     HashMap<String, DefaultNode> cacheMap = new HashMap<String, DefaultNode>(map.size());
                     cacheMap.putAll(map);

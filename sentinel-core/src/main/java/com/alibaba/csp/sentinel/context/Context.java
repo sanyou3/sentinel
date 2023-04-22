@@ -58,12 +58,15 @@ public class Context {
 
     /**
      * Context name.
+     * 这个名字其实有讲究的，那就是可以认为当前资源的是以什么方式被调用的，
+     * 比如说是http接口，又或者是rpc接口，类似dubbo，一般情况下，一个资源只能是http接口或者是rpc接口
+     * 但是sentinel在设计的时候，并没有强制要求一个资源只能属于单一的
      */
     private final String name;
 
     /**
      * The entrance node of current invocation tree.
-     * 当前调用树的入口节点
+     * 当前调用树的入口节点，也就是当前调用方式的统计节点
      */
     private DefaultNode entranceNode;
 
