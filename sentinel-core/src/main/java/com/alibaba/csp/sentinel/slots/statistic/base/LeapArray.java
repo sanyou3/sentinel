@@ -40,9 +40,24 @@ import com.alibaba.csp.sentinel.util.TimeUtil;
  */
 public abstract class LeapArray<T> {
 
+    /**
+     * 一个窗口的时间
+     */
     protected int windowLengthInMs;
+
+    /**
+     * 窗口个数
+     */
     protected int sampleCount;
+
+    /**
+     * 整个滑动窗口统计时间的时长， 比如说 一个窗口的时间 500ms，2个窗口，那么这个事件就是1s
+     */
     protected int intervalInMs;
+
+    /**
+     * 把intervalInMs时间换算成秒为单位
+     */
     private double intervalInSecond;
 
     protected final AtomicReferenceArray<WindowWrap<T>> array;
