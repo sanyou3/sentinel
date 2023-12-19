@@ -142,7 +142,7 @@ public class FlowRuleChecker {
      *           1.1） 针对来源default 默认，那么使用的就是这个资源所有入口的访问数据，也就是真个接口的访问量 ClusterNode
      *           1.2） 设置了针对服务名（来源），那么就使用这个来源对资源的访问量，就是OriginNode
      *           1.3） 设置成other，
-     *        2）流控模式不是直接，所有的逻辑都是一样的 selectReferenceNode
+     *        2）流控模式不是直接，所有的逻辑都是一样的 跟设置的针对来源就没任何关系了 selectReferenceNode
      *           关联 就是被关联资源所有入口的访问数据 ClusterNode
      *           链路 就是这个链路对资源的访问数据 就是 DefaultNode
      * todo 这一部分规则在文章中表述的没那么清楚
